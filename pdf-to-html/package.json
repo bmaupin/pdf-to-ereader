@@ -1,6 +1,10 @@
 {
+  "scripts": {
+    "test": "vitest"
+  },
   "devDependencies": {
     "@types/puppeteer": "^5.4.7",
-    "puppeteer": "^19.0.0"
+    "puppeteer": "^19.0.0",
+    "vitest": "^0.24.3"
   }
 }
