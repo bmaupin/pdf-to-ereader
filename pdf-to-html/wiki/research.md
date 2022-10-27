@@ -5,5 +5,10 @@
 
 #### Libraries
 
-- [https://pdf-lib.js.org/](https://pdf-lib.js.org/)
+- [pdf.js](https://mozilla.github.io/pdf.js/)
+  - This may do the trick!
+  - Seemingly easy access to document text
+  - Access to text location and dimensions
+  - Need to figure out a way to get text style (bold, etc)
+- [pdf-lib](https://pdf-lib.js.org/)
   - Too limited, no obvious way to get text

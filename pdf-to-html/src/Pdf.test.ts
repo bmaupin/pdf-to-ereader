@@ -1,13 +1,9 @@
 import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 
-import { inspect } from 'node:util';
-
 import { describe, expect, test } from 'vitest';
 
 import { Pdf } from './Pdf';
-
-import { PDFDocument } from 'pdf-lib';
 
 describe.skip('Pdf', () => {
   test('Create new Pdf from ArrayBuffer', async () => {
@@ -19,30 +15,37 @@ describe.skip('Pdf', () => {
   });
 });
 
-describe('pdf-lib', () => {
-  test('pdf-lib', async () => {
-    const arrayBuffer = (
-      await readFile(resolve(__dirname, 'testdata/hello-world.pdf'))
-    ).buffer;
-    const pdfDoc = await PDFDocument.load(arrayBuffer);
-    const pages = pdfDoc.getPages();
-    const firstPage = pages[0];
+import pdfjsLib from 'pdfjs-dist';
 
-    console.log('firstPage=', inspect(firstPage));
+describe('pdf.js', () => {
+  test('pdf.js', async () => {
+    const loadingTask = pdfjsLib.getDocument(
+      resolve(__dirname, 'testdata/anguish-languish.pdf')
+    );
+    const doc = await loadingTask.promise;
+    const page = await doc.getPage(1);
+    // console.log('page=', inspect(page));
+
+    // This looks like what we want!
+    // console.log('page', await page.getTextContent());
+    // console.log('page', (await page.getTextContent()).items[0]);
+
+    let i = 0;
+    for (const item of (await page.getTextContent()).items) {
+      /* Each item has:
+         - text content
+         - height/width
+         - starting x/y (the last 2 values of item.transform)
+         - font name (which we can use to get the font family (serif) from the styles parameter)
+         - EOL!
+       */
+      console.log('item=', item);
+
+      i++;
+      if (i === 10) break;
+    }
+
+    // font family
+    console.log('styles=', (await page.getTextContent()).styles);
   });
 });
-
-/* Playing with pdf-lib in node REPL:
-const pdfLib = require('pdf-lib');
-const fs = require('fs');
-const path = require('path');
-
-let arrayBuffer = fs.readFileSync(path.resolve('src/testdata/hello-world.pdf')).buffer;
-let pdfDoc = await pdfLib.PDFDocument.load(arrayBuffer);
-const pages = pdfDoc.getPages();
-const firstPage = pages[0];
-*/
-
-/*
-firstPage.node is a map to pdf
-*/
