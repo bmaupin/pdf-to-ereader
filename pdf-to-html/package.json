@@ -5,10 +5,10 @@
   "devDependencies": {
     "@types/node": "^18.11.6",
     "@types/puppeteer": "^5.4.7",
-    "puppeteer": "^19.0.0",
+    "puppeteer": "^19.2.0",
     "vitest": "^0.24.3"
   },
   "dependencies": {
-    "pdfjs-dist": "^2.16.105"
+    "pdfjs-dist": "^3.0.279"
   }
 }
