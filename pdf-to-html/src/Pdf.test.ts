@@ -16,12 +16,18 @@ describe.skip('Pdf', () => {
 });
 
 import pdfjsLib from 'pdfjs-dist';
+const util = require('util');
 
 describe('pdf.js', () => {
   test('pdf.js', async () => {
-    const loadingTask = pdfjsLib.getDocument(
-      resolve(__dirname, 'testdata/anguish-languish.pdf')
-    );
+    const loadingTask = pdfjsLib.getDocument({
+      url: resolve(__dirname, 'testdata/anguish-languish.pdf'),
+      fontExtraProperties: true,
+      // useSystemFonts: true,
+      // disableFontFace: true,
+      keepLoadedFonts: true,
+      pdfBug: true,
+    });
     const doc = await loadingTask.promise;
     const page = await doc.getPage(1);
     // console.log('page=', inspect(page));
@@ -47,5 +53,28 @@ describe('pdf.js', () => {
 
     // font family
     console.log('styles=', (await page.getTextContent()).styles);
+
+    console.log(
+      'doc._transport.fontLoader.nativeFontFaces=',
+      doc._transport.fontLoader
+    );
+
+    console.log(
+      'await page.getOperatorList()=',
+      util.inspect(await page.getOperatorList())
+    );
+    await page.getOperatorList();
+    console.log('page.commonObjs=', page.commonObjs);
   });
 });
+
+/* Playing around in the Node REPL
+const pdfjsLib = require('pdfjs-dist');
+const path = require('path');
+const loadingTask = pdfjsLib.getDocument({
+  url: path.resolve('src/testdata/anguish-languish.pdf'),
+  fontExtraProperties: true,
+});
+const doc = await loadingTask.promise;
+const page = await doc.getPage(1);
+*/
