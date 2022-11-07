@@ -13,6 +13,7 @@ describe('PdfToHtml', () => {
     );
   });
 
+  // TODO: test document without a title
   test('PDF title', async () => {
     expect(html).toContain('<title>Test title</title>');
   });

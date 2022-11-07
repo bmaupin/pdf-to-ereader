@@ -1,4 +1,4 @@
-import pdfjsLib from 'pdfjs-dist';
+import pdfjsLib, { PDFDocumentProxy } from 'pdfjs-dist';
 
 export class PdfToHtml {
   static async convertPdf(url: string): Promise<string> {
@@ -7,7 +7,7 @@ export class PdfToHtml {
     });
     const doc = await loadingTask.promise;
 
-    const title = ((await doc.getMetadata()).info as any)?.Title;
+    const title = await PdfToHtml.getTitle(doc);
 
     // const page = await doc.getPage(1);
 
@@ -22,5 +22,16 @@ export class PdfToHtml {
   </body>
 </html>
     `;
+  }
+
+  private static async getTitle(doc: PDFDocumentProxy): Promise<string> {
+    const title = ((await doc.getMetadata()).info as any)?.Title;
+    if (!title) {
+      // TODO: later, add some logic to try to derive the title from the first heading
+      // element on the first page since HTML titles aren't optional
+      return 'No title';
+    } else {
+      return title;
+    }
   }
 }
