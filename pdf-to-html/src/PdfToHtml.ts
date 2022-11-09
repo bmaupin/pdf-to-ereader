@@ -1,4 +1,5 @@
 import pdfjsLib, { PDFDocumentProxy } from 'pdfjs-dist';
+import { TextItem } from 'pdfjs-dist/types/src/display/api';
 
 export class PdfToHtml {
   static async convertPdf(url: string): Promise<string> {
@@ -9,7 +10,7 @@ export class PdfToHtml {
 
     const title = await PdfToHtml.getTitle(doc);
 
-    // const page = await doc.getPage(1);
+    const body = await PdfToHtml.getBody(doc);
 
     return `
 <!DOCTYPE html>
@@ -19,11 +20,12 @@ export class PdfToHtml {
   </head>
   <body>
     <article>
-
+      ${body}
     </article>
   </body>
-</html>
-    `;
+</html>`
+      .trimStart()
+      .trim();
   }
 
   private static async getTitle(doc: PDFDocumentProxy): Promise<string> {
@@ -35,5 +37,27 @@ export class PdfToHtml {
     } else {
       return title;
     }
+  }
+
+  private static async getBody(doc: PDFDocumentProxy): Promise<string> {
+    let body = '';
+
+    for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
+      const page = await doc.getPage(pageNumber);
+
+      for (const item of (
+        await page.getTextContent({
+          disableCombineTextItems: false,
+          includeMarkedContent: true,
+        })
+      ).items) {
+        if ('str' in item) {
+          body += item.str;
+        }
+
+        console.log('item=', item);
+      }
+    }
+    return body;
   }
 }
