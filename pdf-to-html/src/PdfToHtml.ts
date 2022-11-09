@@ -18,7 +18,9 @@ export class PdfToHtml {
     <title>${title}</title>
   </head>
   <body>
+    <article>
 
+    </article>
   </body>
 </html>
     `;
