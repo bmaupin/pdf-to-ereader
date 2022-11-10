@@ -1,5 +1,5 @@
 import { resolve } from 'node:path';
-
+import prettier from 'prettier';
 import { beforeAll, describe, expect, test } from 'vitest';
 
 import { PdfToHtml } from './PdfToHtml';
@@ -15,23 +15,17 @@ describe('PdfToHtml', () => {
 
   // TODO: modify the test so it compares against the source HTML file
   test('HTML', async () => {
-    expect(html).toEqual(
-      `
-<!DOCTYPE html>
+    const htmlToCheck = `<!DOCTYPE html>
 <html>
   <head>
     <title>Test title</title>
   </head>
   <body>
-    <article>
-      Hello world
-    </article>
+    <article>Hello world</article>
   </body>
-</html>
-      `
-        .trimStart()
-        .trim()
-    );
+</html>`;
+
+    expect(reformatHtml(html)).toEqual(reformatHtml(htmlToCheck));
   });
 
   // TODO: test document without a title
@@ -43,3 +37,7 @@ describe('PdfToHtml', () => {
     expect(html).toContain('Hello world');
   });
 });
+
+const reformatHtml = (html: string): string => {
+  return prettier.format(html, { parser: 'html' });
+};
