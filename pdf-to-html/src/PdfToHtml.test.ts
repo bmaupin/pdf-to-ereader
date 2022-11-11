@@ -1,40 +1,34 @@
+import { readFile } from 'node:fs/promises';
 import { resolve } from 'node:path';
 import prettier from 'prettier';
 import { beforeAll, describe, expect, test } from 'vitest';
 
 import { PdfToHtml } from './PdfToHtml';
 
-let html: string;
+let generatedHtml: string;
+let sourceHtml: string;
 
 describe('PdfToHtml', () => {
   beforeAll(async () => {
-    html = await PdfToHtml.convertPdf(
+    sourceHtml = (
+      await readFile(resolve(__dirname, 'testdata/hello-world.html'))
+    ).toString();
+    generatedHtml = await PdfToHtml.convertPdf(
       resolve(__dirname, 'testdata/hello-world.pdf')
     );
   });
 
-  // TODO: modify the test so it compares against the source HTML file
   test('HTML', async () => {
-    const htmlToCheck = `<!DOCTYPE html>
-<html>
-  <head>
-    <title>Test title</title>
-  </head>
-  <body>
-    <article>Hello world</article>
-  </body>
-</html>`;
-
-    expect(reformatHtml(html)).toEqual(reformatHtml(htmlToCheck));
+    expect(reformatHtml(generatedHtml)).toEqual(reformatHtml(sourceHtml));
   });
 
   // TODO: test document without a title
-  test('PDF title', async () => {
-    expect(html).toContain('<title>Test title</title>');
+  test('HTML title', async () => {
+    expect(generatedHtml).toContain('<title>Test title</title>');
   });
 
-  test('PDF body', async () => {
-    expect(html).toContain('Hello world');
+  test('HTML body', async () => {
+    expect(generatedHtml).toContain('Hello world');
   });
 });
 
