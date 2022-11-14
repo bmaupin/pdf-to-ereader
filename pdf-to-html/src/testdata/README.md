@@ -1,9 +1,10 @@
 #### Generating test files
 
 ```
-for htmlfile in *.html; do htmldoc ${htmlfile} -f $(basename -s .html ${htmlfile}).pdf --webpage --no-embedfonts --header ''; done
+for htmlfile in *.html; do htmldoc ${htmlfile} -f $(basename -s .html ${htmlfile}).pdf --footer '' --header '' --no-embedfonts --webpage; done
 ```
 
+- `--footer ''` disables page numbering
 - `--header ''` disables the title in the document; the title is still included in the PDF metadata
 
 #### Testing different tools for generating test files
