@@ -8,7 +8,7 @@ import { PdfToHtml } from './PdfToHtml';
 let generatedHtml: string;
 let sourceHtml: string;
 
-describe('PdfToHtml', () => {
+describe('hello-world.pdf', () => {
   beforeAll(async () => {
     sourceHtml = (
       await readFile(resolve(__dirname, 'testdata/hello-world.html'))
@@ -29,6 +29,21 @@ describe('PdfToHtml', () => {
 
   test('HTML body', async () => {
     expect(generatedHtml).toContain('Hello world');
+  });
+});
+
+describe('paragraphs.pdf', () => {
+  beforeAll(async () => {
+    sourceHtml = (
+      await readFile(resolve(__dirname, 'testdata/paragraphs.html'))
+    ).toString();
+    generatedHtml = await PdfToHtml.convertPdf(
+      resolve(__dirname, 'testdata/paragraphs.pdf')
+    );
+  });
+
+  test('HTML', async () => {
+    expect(reformatHtml(generatedHtml)).toEqual(reformatHtml(sourceHtml));
   });
 });
 
