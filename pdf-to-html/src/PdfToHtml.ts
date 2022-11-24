@@ -42,8 +42,21 @@ export class PdfToHtml {
   private static async getBody(doc: PDFDocumentProxy): Promise<string> {
     let body = '';
 
+    // Start with a clean paragraph
+    // TODO: later we'll need to process titles/headings before starting the first paragraph
+    body += '<p>';
+
     for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
       const page = await doc.getPage(pageNumber);
+
+      /*
+       TODO: add paragraphs
+       - after "Eu tincidunt tortor aliquam nulla facilisi."
+       - logic:
+          - track line Y and ~~line height~~ (later)
+          - ~~if line height changes~~ (later)
+            or if Y changes by ... more than 2*height? end the paragraph
+      */
 
       for (const item of (
         await page.getTextContent({
@@ -58,6 +71,10 @@ export class PdfToHtml {
         console.log('item=', item);
       }
     }
+
+    // TODO: later, we'll need to probably track whether we're in a paragraph or not
+    body += '</p>';
+
     return body;
   }
 }
