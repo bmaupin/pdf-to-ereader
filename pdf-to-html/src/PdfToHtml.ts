@@ -51,7 +51,7 @@ export class PdfToHtml {
 
       /*
        TODO: add paragraphs
-       - after "Eu tincidunt tortor aliquam nulla facilisi."
+       - after "Scelerisque varius morbi enim nunc faucibus a."
        - logic:
           - track line Y and ~~line height~~ (later)
           - ~~if line height changes~~ (later)
@@ -65,6 +65,9 @@ export class PdfToHtml {
         })
       ).items) {
         if ('str' in item) {
+          if (item.hasEOL) {
+            body += ' ';
+          }
           body += item.str;
         }
 
