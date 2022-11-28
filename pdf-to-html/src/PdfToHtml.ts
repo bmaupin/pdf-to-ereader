@@ -65,7 +65,7 @@ export class PdfToHtml {
         })
       ).items) {
         if ('str' in item) {
-          if (item.hasEOL) {
+          if (item.hasEOL && !body.endsWith(' ') && !item.str.startsWith(' ')) {
             body += ' ';
           }
           body += item.str;
