@@ -16,28 +16,25 @@ describe.skip('Pdf', () => {
 });
 
 import pdfjsLib from 'pdfjs-dist';
-const util = require('util');
 
-describe('pdf.js', () => {
+describe.skip('pdf.js', () => {
   test('pdf.js', async () => {
     const loadingTask = pdfjsLib.getDocument({
-      url: resolve(__dirname, 'testdata/anguish-languish.pdf'),
-      fontExtraProperties: true,
-      // useSystemFonts: true,
-      // disableFontFace: true,
-      keepLoadedFonts: true,
-      pdfBug: true,
+      // anguish-languish.htmldoc.pdf uses standard non-embedded fonts only
+      url: resolve(__dirname, 'testdata/anguish-languish.htmldoc.pdf'),
+      // Document.pdf uses mostly non-standard non-embedded fonts, with one embedded (Calibri)
+      // url: resolve(__dirname, 'testdata/Document.pdf'),
     });
     const doc = await loadingTask.promise;
     const page = await doc.getPage(1);
-    // console.log('page=', inspect(page));
 
-    // This looks like what we want!
-    // console.log('page', await page.getTextContent());
-    // console.log('page', (await page.getTextContent()).items[0]);
+    const { items, styles } = await page.getTextContent({
+      disableCombineTextItems: false,
+      includeMarkedContent: true,
+    });
 
     let i = 0;
-    for (const item of (await page.getTextContent()).items) {
+    for (const item of items) {
       /* Each item has:
          - text content
          - height/width
@@ -51,20 +48,19 @@ describe('pdf.js', () => {
       if (i === 10) break;
     }
 
-    // font family
-    console.log('styles=', (await page.getTextContent()).styles);
+    /* Each item has:
+       - fontFamily (e.g. serif/sans-serif)
+       - other stuff I won't need :P
+     */
+    // console.log('styles=', (await page.getTextContent()).styles);
 
-    console.log(
-      'doc._transport.fontLoader.nativeFontFaces=',
-      doc._transport.fontLoader
-    );
-
-    console.log(
-      'await page.getOperatorList()=',
-      util.inspect(await page.getOperatorList())
-    );
+    // Get the original font name!
     await page.getOperatorList();
-    console.log('page.commonObjs=', page.commonObjs);
+    for (const fontName in styles) {
+      console.log('fontName=', fontName);
+      console.log('originalFontName=', page.commonObjs.get(fontName).name);
+      console.log();
+    }
   });
 });
 
