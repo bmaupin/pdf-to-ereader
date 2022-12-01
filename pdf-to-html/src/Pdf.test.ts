@@ -56,11 +56,24 @@ describe.skip('pdf.js', () => {
 
     // Get the original font name!
     await page.getOperatorList();
-    for (const fontName in styles) {
-      console.log('fontName=', fontName);
-      console.log('originalFontName=', page.commonObjs.get(fontName).name);
-      console.log();
+
+    for (const item of items) {
+      if ('fontName' in item) {
+        console.log('fontName=', item.fontName);
+        console.log(
+          'originalFontName=',
+          page.commonObjs.get(item.fontName).name
+        );
+        console.log();
+      }
     }
+
+    // This works too, although possibly less useful
+    // for (const fontName in styles) {
+    //   console.log('fontName=', fontName);
+    //   console.log('originalFontName=', page.commonObjs.get(fontName).name);
+    //   console.log();
+    // }
   });
 });
 
