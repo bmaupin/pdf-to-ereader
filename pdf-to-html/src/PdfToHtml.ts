@@ -49,14 +49,7 @@ export class PdfToHtml {
     for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
       const page = await doc.getPage(pageNumber);
 
-      /*
-       TODO: add paragraphs
-       - after "Scelerisque varius morbi enim nunc faucibus a."
-       - logic:
-          - track line Y and ~~line height~~ (later)
-          - ~~if line height changes~~ (later)
-            or if Y changes by ... more than 2*height? end the paragraph
-      */
+      let previousYCoordinate = 0;
 
       for (const item of (
         await page.getTextContent({
@@ -64,6 +57,27 @@ export class PdfToHtml {
           includeMarkedContent: true,
         })
       ).items) {
+        let height = 0;
+        let yCoordinate = 0;
+
+        if ('height' in item) {
+          height = item.height;
+        }
+
+        if ('transform' in item) {
+          [, , , , , yCoordinate] = item.transform;
+        }
+
+        // TODO: will we need to track changes to line height as well?
+        // Start a new paragraph based on the spacing between lines
+        if (height && yCoordinate) {
+          // PDFs are processed from top to bottom
+          if ((previousYCoordinate - yCoordinate) / 2 > height) {
+            body += '</p>';
+            body += '<p>';
+          }
+        }
+
         if ('str' in item) {
           if (item.hasEOL && !body.endsWith(' ') && !item.str.startsWith(' ')) {
             body += ' ';
@@ -71,6 +85,9 @@ export class PdfToHtml {
           body += item.str;
         }
 
+        previousYCoordinate = yCoordinate;
+
+        // DELETEME
         console.log('item=', item);
       }
     }
