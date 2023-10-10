@@ -1,2 +1,4 @@
 node_modules
+# TODO: Ignore test PDFs for now, until we decide whether we want to store them in Git or generate them programatically
+src/testdata/*.pdf
 src/testdata/*.swp
