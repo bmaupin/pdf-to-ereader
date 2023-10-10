@@ -1,3 +1,9 @@
+#### Goals
+
+- Generate PDF files programatically
+- Title should be in PDF metadata (and ideally in the document too)
+- If we can use a JavaScript-based tool (like Puppeteer) then file size, embedded fonts, etc shouldn't matter; we can generate the files on the fly if they don't exist
+
 #### Generating test files
 
 ```
@@ -11,7 +17,7 @@ for htmlfile in *.html; do htmldoc ${htmlfile} -f $(basename -s .html ${htmlfile
 
 Testing different tools for generating test PDF files from HTML
 
-The main goal is to have the smallest PDF size possible with all of the content.
+~~The main goal is to have the smallest PDF size possible with all of the content.~~
 
 | Tool                       | Size   | Title                     | Embedded fonts | Notes                             |
 | -------------------------- | ------ | ------------------------- | -------------- | --------------------------------- |
@@ -21,4 +27,5 @@ The main goal is to have the smallest PDF size possible with all of the content.
 | LibreOffice (GUI)          | 7.3 KB | No title                  | 1 (subset)     |                                   |
 | Pandoc                     | 47 KB  | PDF title and in document | 2              |                                   |
 | Puppeteer (Chrome)         | 7.1 KB | No title                  | 1 (subset)     |                                   |
+| Puppeteer (Firefox)        |        |                           |                |                                   |
 | wkhtmltopdf                | 6.9 KB | No title                  | 1              |                                   |
