@@ -49,7 +49,8 @@ export class PdfToHtml {
     for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
       const page = await doc.getPage(pageNumber);
 
-      let previousYCoordinate = 0;
+      let prevYCoordinate = 0;
+      let prevHasEOL = false;
 
       for (const item of (
         await page.getTextContent({
@@ -72,20 +73,23 @@ export class PdfToHtml {
         // Start a new paragraph based on the spacing between lines
         if (height && yCoordinate) {
           // PDFs are processed from top to bottom
-          if ((previousYCoordinate - yCoordinate) / 2 > height) {
+          if ((prevYCoordinate - yCoordinate) / 2 > height) {
             body += '</p>';
             body += '<p>';
           }
         }
 
         if ('str' in item) {
-          if (item.hasEOL && !body.endsWith(' ') && !item.str.startsWith(' ')) {
+          if (prevHasEOL && !body.endsWith(' ') && !item.str.startsWith(' ')) {
             body += ' ';
           }
           body += item.str;
         }
 
-        previousYCoordinate = yCoordinate;
+        if ('hasEOL' in item) {
+          prevHasEOL = item.hasEOL;
+        }
+        prevYCoordinate = yCoordinate;
 
         // DELETEME
         console.log('item=', item);
