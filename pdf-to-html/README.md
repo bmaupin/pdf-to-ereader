@@ -2,7 +2,7 @@
 
 #### Research
 
-- [ ] Pre-existing libraries to convert PDF to HTML
+- [x] Pre-existing libraries to convert PDF to HTML
 - [x] JavaScript PDF libraries for parsing PDF
 
 #### Functionality
