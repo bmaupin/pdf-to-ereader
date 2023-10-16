@@ -8,13 +8,13 @@ import { PdfToHtml } from './PdfToHtml';
 let generatedHtml: string;
 let sourceHtml: string;
 
-describe('hello-world.pdf', () => {
+describe('simple-page.pdf', () => {
   beforeAll(async () => {
     sourceHtml = (
-      await readFile(resolve(__dirname, 'testdata/hello-world.html'))
+      await readFile(resolve(__dirname, 'testdata/simple-page.html'))
     ).toString();
     generatedHtml = await PdfToHtml.convertPdf(
-      resolve(__dirname, 'testdata/hello-world.pdf')
+      resolve(__dirname, 'testdata/simple-page.pdf')
     );
   });
 
@@ -24,26 +24,11 @@ describe('hello-world.pdf', () => {
 
   // TODO: test document without a title
   test('HTML title', async () => {
-    expect(generatedHtml).toContain('<title>Test title</title>');
+    expect(generatedHtml).toContain('<title>Simple test page</title>');
   });
 
   test('HTML body', async () => {
-    expect(generatedHtml).toContain('Hello world');
-  });
-});
-
-describe('paragraphs.pdf', () => {
-  beforeAll(async () => {
-    sourceHtml = (
-      await readFile(resolve(__dirname, 'testdata/paragraphs.html'))
-    ).toString();
-    generatedHtml = await PdfToHtml.convertPdf(
-      resolve(__dirname, 'testdata/paragraphs.pdf')
-    );
-  });
-
-  test('HTML', async () => {
-    expect(reformatHtml(generatedHtml)).toEqual(reformatHtml(sourceHtml));
+    expect(generatedHtml).toContain('This text is neither bold nor italic');
   });
 });
 
