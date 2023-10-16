@@ -50,7 +50,6 @@ export class PdfToHtml {
       const page = await doc.getPage(pageNumber);
 
       let prevYCoordinate = 0;
-      let prevHasEOL = false;
 
       for (const item of (
         await page.getTextContent({
@@ -76,19 +75,19 @@ export class PdfToHtml {
           if ((prevYCoordinate - yCoordinate) / 2 > height) {
             body += '</p>';
             body += '<p>';
+          } else if (
+            'str' in item &&
+            !body.endsWith(' ') &&
+            !item.str.startsWith(' ')
+          ) {
+            body += ' ';
           }
         }
 
         if ('str' in item) {
-          if (prevHasEOL && !body.endsWith(' ') && !item.str.startsWith(' ')) {
-            body += ' ';
-          }
           body += item.str;
         }
 
-        if ('hasEOL' in item) {
-          prevHasEOL = item.hasEOL;
-        }
         prevYCoordinate = yCoordinate;
 
         // DELETEME
