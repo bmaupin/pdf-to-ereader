@@ -57,6 +57,12 @@ export class PdfToHtml {
           includeMarkedContent: true,
         })
       ).items) {
+        // TODO: Handle PDF marked content
+        if ('type' in item) {
+          console.warn('PDF marked content found!: ', item);
+          continue;
+        }
+
         let height = 0;
         let yCoordinate = 0;
 

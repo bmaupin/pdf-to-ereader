@@ -8,15 +8,17 @@
 #### Functionality
 
 - [x] Output basic HTML with PDF text
-- [x] Add paragraphs
-- [ ] Add headings
-- [ ] Add bold?
+- [x] Parse paragraphs
+- [ ] Parse headings
+- [ ] Parse bold?
   - Might be doable; text weight seems to be based on font name. Same for italics.
-- [ ] Add italics?
-- [ ] Add underline?
-- [ ] Add code snippets
-- [ ] Add block text
-- [ ] Add centred
+- [ ] Parse italics?
+- [ ] Parse underline?
+- [ ] Parse code snippets
+- [ ] Parse block text
+- [ ] Parse centred
+- [ ] Parse URLs
+- [ ] PDF marked content? See [docs/marked-content.md](docs/marked-content.md)
 
 #### Testing
 
