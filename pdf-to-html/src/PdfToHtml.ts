@@ -58,36 +58,28 @@ export class PdfToHtml {
         })
       ).items) {
         // TODO: Handle PDF marked content
+        // This filters out items that are of type TextMarkedContent; from here on out,
+        // all items are of type TextItem
         if ('type' in item) {
           console.warn('PDF marked content found!: ', item);
           continue;
         }
 
-        let height = 0;
-        let yCoordinate = 0;
-
-        if ('height' in item) {
-          height = item.height;
-        }
-
-        if ('transform' in item) {
-          [, , , , , yCoordinate] = item.transform;
-        }
+        // Y coordinate of where the text starts. PDFs are processed from top to bottom
+        // but the Y coordinate is the distance from the bottom of the page.
+        const yCoordinate = item.transform[5];
 
         // TODO: will we need to track changes to line height as well?
         // Start a new paragraph based on the spacing between lines
-        if (height && yCoordinate) {
-          // PDFs are processed from top to bottom
-          if ((prevYCoordinate - yCoordinate) / 2 > height) {
-            body += '</p>';
-            body += '<p>';
-          } else if (
-            'str' in item &&
-            !body.endsWith(' ') &&
-            !item.str.startsWith(' ')
-          ) {
-            body += ' ';
-          }
+        if ((prevYCoordinate - yCoordinate) / 2 > item.height) {
+          body += '</p>';
+          body += '<p>';
+        } else if (
+          'str' in item &&
+          !body.endsWith(' ') &&
+          !item.str.startsWith(' ')
+        ) {
+          body += ' ';
         }
 
         if ('str' in item) {
