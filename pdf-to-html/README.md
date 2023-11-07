@@ -10,7 +10,7 @@
 - [x] Output basic HTML with PDF text
 - [x] Parse paragraphs
 - [ ] Parse headings
-- [ ] Parse bold?
+- [x] Parse bold text
   - Might be doable; text weight seems to be based on font name. Same for italics.
 - [ ] Parse italics?
 - [ ] Parse underline?

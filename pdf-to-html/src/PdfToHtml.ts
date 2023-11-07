@@ -49,6 +49,9 @@ export class PdfToHtml {
     for (let pageNumber = 1; pageNumber <= doc.numPages; pageNumber++) {
       const page = await doc.getPage(pageNumber);
 
+      // This is required to get the original font name (https://github.com/mozilla/pdf.js/pull/10753#issuecomment-1334155825)
+      await page.getOperatorList();
+
       let prevYCoordinate = 0;
 
       for (const item of (
@@ -64,6 +67,14 @@ export class PdfToHtml {
           console.warn('PDF marked content found!: ', item);
           continue;
         }
+
+        const originalFontName: string = page.commonObjs.get(
+          item.fontName
+        ).name;
+        const bold = originalFontName.toLowerCase().includes('bold');
+
+        // DELETEME
+        console.log('originalFontName=', originalFontName);
 
         // Y coordinate of where the text starts. PDFs are processed from top to bottom
         // but the Y coordinate is the distance from the bottom of the page.
@@ -82,8 +93,16 @@ export class PdfToHtml {
           body += ' ';
         }
 
+        if (bold) {
+          body += '<strong>';
+        }
+
         if ('str' in item) {
           body += item.str;
+        }
+
+        if (bold) {
+          body += '</strong>';
         }
 
         prevYCoordinate = yCoordinate;

@@ -8,6 +8,10 @@ import { PdfToHtml } from './PdfToHtml';
 let generatedHtml: string;
 let sourceHtml: string;
 
+const reformatHtml = (html: string): string => {
+  return prettier.format(html, { parser: 'html' });
+};
+
 describe('simple-page.pdf', () => {
   beforeAll(async () => {
     sourceHtml = (
@@ -31,7 +35,3 @@ describe('simple-page.pdf', () => {
     expect(generatedHtml).toContain('This text is neither bold nor italic');
   });
 });
-
-const reformatHtml = (html: string): string => {
-  return prettier.format(html, { parser: 'html' });
-};
