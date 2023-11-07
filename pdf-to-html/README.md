@@ -14,7 +14,7 @@
   - Might be doable; text weight seems to be based on font name. Same for italics.
 - [ ] Parse italics?
 - [ ] Parse underline?
-- [ ] Parse code snippets
+- [ ] Parse code snippets? Or maybe just parse monospace fonts?
 - [ ] Parse block text
 - [ ] Parse centred
 - [ ] Parse URLs
