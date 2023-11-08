@@ -82,15 +82,21 @@ export class PdfToHtml {
 
         // TODO: will we need to track changes to line height as well?
         // Start a new paragraph based on the spacing between lines
-        if ((prevYCoordinate - yCoordinate) / 2 > item.height) {
-          body += '</p>';
-          body += '<p>';
-        } else if (
-          'str' in item &&
-          !body.endsWith(' ') &&
-          !item.str.startsWith(' ')
-        ) {
-          body += ' ';
+        //
+        // Sometimes zero-height items containing hasEOL==true might be introduced
+        // between lines; we should ignore these
+        if (item.height > 0) {
+          if ((prevYCoordinate - yCoordinate) / 2 > item.height) {
+            body += '</p>';
+            body += '<p>';
+          } else if (
+            'str' in item &&
+            !body.endsWith(' ') &&
+            !item.str.startsWith(' ')
+          ) {
+            body += ' ';
+          }
+          prevYCoordinate = yCoordinate;
         }
 
         if (bold) {
@@ -104,8 +110,6 @@ export class PdfToHtml {
         if (bold) {
           body += '</strong>';
         }
-
-        prevYCoordinate = yCoordinate;
 
         // DELETEME
         console.log('item=', item);
