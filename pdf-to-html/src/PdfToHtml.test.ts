@@ -1,5 +1,7 @@
-import { readdir, readFile } from 'node:fs/promises';
+import { JSDOM } from 'jsdom';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
 import path from 'node:path';
+import { PDFDocument } from 'pdf-lib';
 import puppeteer, { Browser } from 'puppeteer';
 import prettier from 'prettier';
 import { beforeAll, describe, expect, test } from 'vitest';
@@ -29,17 +31,22 @@ const buildTestData = async () => {
     for (let i = 0; i < files.length; i++) {
       const filename = files[i];
       if (filename.endsWith(INPUT_EXTENSION)) {
-        await printToPdf(
-          browser,
-          `file:${path.join(testdataDirectory, filename)}`
-        );
+        const htmlFilePath = path.join(testdataDirectory, filename);
+        const pdfFilePath = htmlFilePath.replace(/\.html$/, '.pdf');
+
+        const pdfFile = await printToPdf(browser, `file:${htmlFilePath}`);
+        const title = await getTitleFromHtml(htmlFilePath);
+        await setPdfTitle(pdfFile, pdfFilePath, title);
       }
     }
     await browser.close();
   };
 
   // https://developers.google.com/web/updates/2017/04/headless-chrome#screenshots
-  const printToPdf = async (browser: Browser, inputUrl: string) => {
+  const printToPdf = async (
+    browser: Browser,
+    inputUrl: string
+  ): Promise<Buffer> => {
     console.info('Printing to PDF: ', inputUrl);
     const outputFilename =
       path.basename(inputUrl, INPUT_EXTENSION) + OUTPUT_EXTENSION;
@@ -47,7 +54,28 @@ const buildTestData = async () => {
     const page = await browser.newPage();
 
     await page.goto(inputUrl);
-    await page.pdf({ path: outputPath });
+    return await page.pdf({ path: outputPath });
+  };
+
+  const getTitleFromHtml = async (htmlFilePath: string): Promise<string> => {
+    const jsdom = new JSDOM();
+    const parser = new jsdom.window.DOMParser();
+    const html = parser.parseFromString(
+      (await readFile(htmlFilePath)).toString(),
+      'text/html'
+    );
+    return html.title;
+  };
+
+  const setPdfTitle = async (
+    pdfFile: Buffer,
+    pdfFilePath: string,
+    title: string
+  ) => {
+    const pdfDoc = await PDFDocument.load(pdfFile);
+    pdfDoc.setTitle(title);
+    const pdfBytes = await pdfDoc.save();
+    await writeFile(pdfFilePath, pdfBytes);
   };
 
   const filesInCwd = await getTestdataFiles();
@@ -63,7 +91,7 @@ beforeAll(async () => {
 describe('simple-page.pdf', () => {
   beforeAll(async () => {
     sourceHtml = (
-      await readFile(path.resolve(__dirname, 'testdata/simple-page.html'))
+      await readFile(path.join(testdataDirectory, 'simple-page.html'))
     ).toString();
     generatedHtml = await PdfToHtml.convertPdf(
       path.resolve(__dirname, 'testdata/simple-page.pdf')

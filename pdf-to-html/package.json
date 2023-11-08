@@ -6,9 +6,12 @@
     "test": "vitest"
   },
   "devDependencies": {
+    "@types/jsdom": "^21.1.5",
     "@types/node": "^18.11.6",
     "@types/prettier": "^2.7.1",
     "@types/puppeteer": "^5.4.7",
+    "jsdom": "^22.1.0",
+    "pdf-lib": "^1.17.1",
     "prettier": "^2.7.1",
     "puppeteer": "^19.2.0",
     "vitest": "^0.24.3"
