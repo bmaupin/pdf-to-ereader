@@ -9,6 +9,8 @@ import { beforeAll, describe, expect, test } from 'vitest';
 import { PdfToHtml } from './PdfToHtml';
 
 const testdataDirectory = path.resolve(__dirname, 'testdata/');
+// List of HTML test files to automatically convert to PDF when the tests are run
+const testHtmlFilesToConvert = ['simple-page.html'];
 
 let generatedHtml: string;
 let sourceHtml: string;
@@ -20,10 +22,6 @@ const reformatHtml = (html: string): string => {
 const buildTestData = async () => {
   const INPUT_EXTENSION = '.html';
   const OUTPUT_EXTENSION = '.pdf';
-
-  const getTestdataFiles = async () => {
-    return await readdir(testdataDirectory);
-  };
 
   const printFilesToPdf = async (files: string[]) => {
     const browser = await puppeteer.launch();
@@ -78,9 +76,7 @@ const buildTestData = async () => {
     await writeFile(pdfFilePath, pdfBytes);
   };
 
-  const filesInCwd = await getTestdataFiles();
-  console.log('filesInCwd: ', filesInCwd);
-  await printFilesToPdf(filesInCwd);
+  await printFilesToPdf(testHtmlFilesToConvert);
 };
 
 beforeAll(async () => {
